@@ -130,3 +130,14 @@ input, textarea {
 .create-account-text {
   padding-left: 5px;
 }
+
+.logout {
+  color: blue;
+  float: right;
+  padding-right: 100px;
+  cursor: pointer;
+}
+
+.logout:hover {
+  color: black;
+}

@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export function useArticleData(initialValue, articleId) {
+export function useArticleData(initialValue, articleId, user, isLoading, getToken)  {
   const [articleInfo, setArticleInfo] = useState(initialValue);
 
   useEffect(() => {
     async function fetchData() {
-      const res = await axios.get(
-        `http://localhost:8000/api/articles/${articleId}`
-      );
-      const { upvotes, comments, title, content } = res.data;
-      setArticleInfo({ upvotes, comments, title, content });
+      if (isLoading) return;
+
+      const authtoken = await getToken();
+      const res = await axios.get(`http://localhost:8000/api/articles/${articleId}`,
+        {
+          headers: {authtoken} 
+        }
+        );
+      const { upvotes, comments, title, content, canVote } = res.data;
+      setArticleInfo({ upvotes, comments, title, content, canVote });
     }
     fetchData();
-  }, [articleId]);
+  }, [articleId, user, isLoading, getToken]);
 
   return [articleInfo, setArticleInfo];
 }

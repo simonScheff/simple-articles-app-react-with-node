@@ -2,7 +2,12 @@ import express from "express";
 import fs from "fs";
 import { db, connectToDB } from "./db.js";
 import admin from "firebase-admin";
+import path from "path";
+import { fileURLToPath } from "url";
+
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const credentials = JSON.parse(fs.readFileSync("./src/credentials.json"));
 
@@ -11,6 +16,12 @@ admin.initializeApp({
 });
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../build")));
+
+// route of everything but the api
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../build/index.html"));
+});
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
@@ -77,7 +88,7 @@ app.put(
   async (req, res) => {
     const { articleName } = req.params;
     const article = await getArticle(articleName);
-    if (!userCanVote(article.uppvoteIds || [], req.user.uid)) {
+    if (!userCanVote(article.ids || [], req.user.uid)) {
       return res.send({ error: "User already vote" });
     }
 
@@ -112,8 +123,24 @@ app.post(
   }
 );
 
+app.get("/api/user", middlewareIsUserExists(), async (req, res) => {
+  // return real user data
+  console.log(" get user req.user", req.user);
+  const user = await db.collection("users").findOne({ uid: req.user.uid });
+  res.send(user);
+});
+
+app.post("/api/user", middlewareIsUserExists(), async (req, res) => {
+  const { email, userName } = req.body;
+  const uid = req.user.uid;
+  await db.collection("users").insertOne({ email, userName, uid });
+
+  return res.json({ email, userName, uid });
+});
+
+const port = process.env.PORT || 8000;
 app.listen(8000, async () => {
-  console.log("server is listening on port 8000");
+  console.log("server is listening on port " + port + "");
   await connectToDB();
 });
 
@@ -144,6 +171,7 @@ function middlewareIsUserExists() {
   return (req, res, next) => {
     if (!req.user.uid) {
       req.user.uid = null;
+      console.log("user not exists", req.user);
       return res.sendStatus(401);
     }
     next();

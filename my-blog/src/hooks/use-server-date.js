@@ -18,13 +18,13 @@ export function useArticleData(initialValue, articleId, user, isLoading, getToke
       setArticleInfo({ upvotes, comments, title, content, canVote });
     }
     fetchData();
-  }, [articleId, user, isLoading, getToken]);
+  }, [articleId, user, isLoading]);
 
   return [articleInfo, setArticleInfo];
 }
 
-export function useArticlesData(initialValue) {
-  const [articlesInfo, setArticlesInfo] = useState(initialValue);
+export function useArticlesData() {
+  const [articlesInfo, setArticlesInfo] = useState([]);
 
   useEffect(() => {
     async function fetchData() {

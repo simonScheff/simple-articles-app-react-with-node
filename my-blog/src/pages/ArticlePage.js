@@ -4,7 +4,6 @@ import { useArticleData } from "../hooks/use-server-date";
 import CommenentsList from "../components/comments-list";
 import axios from "axios";
 import AddCommentForm from "../components/add-comment-form";
-import useUser from "../hooks/use-user";
 
 const UpvotesSection = ({ addUpvote, login, canVote, user, upvotes }) => {
   return (
@@ -19,10 +18,9 @@ const UpvotesSection = ({ addUpvote, login, canVote, user, upvotes }) => {
   );
 };
 
-const ArticlePage = () => {
+const ArticlePage = ({ user, isLoading, getToken, userData }) => {
   const navigate = useNavigate();
   const { articleId } = useParams();
-  const { user, isLoading, getToken } = useUser();
   const [articleInfo, setArticleInfo] = useArticleData(
     { upvotes: 0, comments: [] },
     articleId,
@@ -70,8 +68,6 @@ const ArticlePage = () => {
     return <></>;
   }
 
-  console.log(articleInfo);
-
   return (
     <>
       <h1>{articleInfo.title}</h1>
@@ -86,7 +82,7 @@ const ArticlePage = () => {
         <p key={paragraph}>{paragraph}</p>
       ))}
       {user ? (
-        <AddCommentForm addComment={addComment} />
+        <AddCommentForm addComment={addComment} userName={userData.userName} />
       ) : (
         <button onClick={login}>Login to add a comment</button>
       )}

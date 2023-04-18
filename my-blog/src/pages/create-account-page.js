@@ -1,40 +1,45 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useUserForm from "../hooks/use-user-form";
-import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
-import { useState } from "react";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import useUser from "../hooks/use-user";
+import axios from "axios";
+import { useEffect } from "react";
 
 const CreateAccountPage = () => {
-    const navigate = useNavigate();
-    const userForm = useUserForm();
-    const [confirmPass, setConfirmPass] = useState('');
-    const createAccount = async() => {
-        if (userForm.password.state !== confirmPass) {
-            return userForm.error.set('Passwords do not match');
-        }
-        try {
-            await createUserWithEmailAndPassword(getAuth(), userForm.email.state, userForm.password.state);
-            userForm.error.set(null);
-            navigate('/articles');
-        } catch(e) {
-            return userForm.error.set(e.message);
-
-        }
+  const createAccount = async () => {
+    try {
+      await createUserWithEmailAndPassword(getAuth(), email, password);
+    } catch (e) {
+      return alert(e.message);
     }
+  };
 
-    return (<>    
-      <h1>Create Account</h1>
-      {userForm.form}
-      <input
-        placeholder="confirm password"
-        type="password"
-        value={confirmPass}
-        onChange={(data) => setConfirmPass(data.target.value)}
-      />
-      <button disabled={!userForm.email.state || !userForm.password.state} onClick={createAccount}>create</button>
-      <p className="create-account-text">
-        <Link to="/create-account">Don't have an account? create one here</Link>
-      </p>
-    </>)
-}
+  const navigate = useNavigate();
+  const { getToken, user } = useUser();
+  const userForm = useUserForm(true, createAccount);
+  const email = userForm.watch("email");
+  const userName = userForm.watch("userName");
+  const password = userForm.watch("password");
+
+  useEffect(() => {
+    const saveUser = async () => {
+      try {
+        await axios.post(
+          "http://localhost:8000/api/user",
+          { userName, email },
+          { headers: { authtoken: await getToken() } }
+        );
+        navigate("/articles");
+      } catch (e) {
+        alert(e.message);
+      }
+    };
+    if (user) {
+      saveUser();
+    }
+  }, [user]);
+
+  return <>{userForm.form}</>;
+};
 
 export default CreateAccountPage;

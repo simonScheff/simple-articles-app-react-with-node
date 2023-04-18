@@ -138,6 +138,14 @@ input, textarea {
   cursor: pointer;
 }
 
+.userName {
+  color: blue;
+  float: right;
+  padding-right: 100px;
+  cursor: pointer;
+  float: right;
+}
+
 .logout:hover {
   color: black;
 }

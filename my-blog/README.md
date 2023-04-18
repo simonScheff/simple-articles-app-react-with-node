@@ -70,4 +70,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 
-TODO: Firebase => how to add name -> add to comments
+TODO: 
+1) Create validation to form - https://react-hook-form.com/
+2) Save user data on node
+3) display userName on comments and on top 

@@ -5,7 +5,7 @@ const ArticleListPage = () => {
   return (
     <>
       <h1>Articles</h1>
-      <ArticlesList articles={useArticlesData([])} />
+      <ArticlesList articles={useArticlesData()} />
     </>
   );
 };

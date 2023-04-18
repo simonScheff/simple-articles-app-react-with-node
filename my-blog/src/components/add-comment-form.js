@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-const AddCommentForm = ({addComment}) => {
-  const [name, setName] = useState("");
+const AddCommentForm = ({ addComment, userName }) => {
+  const [name, setName] = useState(userName);
   const [commentText, setCommentText] = useState("");
-  
+
   return (
     <div id="add-comment-form">
       <h3>Add a comment</h3>
@@ -24,7 +24,9 @@ const AddCommentForm = ({addComment}) => {
           onChange={(e) => setCommentText(e.target.value)}
         />
       </label>
-      <button onClick={() => addComment({name, commentText})}>Add Comment</button>
+      <button onClick={() => addComment({ name, commentText })}>
+        Add Comment
+      </button>
     </div>
   );
 };

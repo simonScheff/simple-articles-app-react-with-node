@@ -11,7 +11,8 @@ import NotFoundPage from "./pages/MotFoundPage";
 import useUser from "./hooks/use-user";
 
 function App() {
-  const { user, userData, logOut, isLoading, getToken } = useUser();
+  const { user, userData, logOut, isLoading, getToken, updateUserData } =
+    useUser();
   return (
     <Router>
       <div className="App">
@@ -33,7 +34,16 @@ function App() {
               }
             />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/create-account" element={<CreateAccountPage />} />
+            <Route
+              path="/create-account"
+              element={
+                <CreateAccountPage
+                  user={user}
+                  getToken={getToken}
+                  updateUserData={updateUserData}
+                />
+              }
+            />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

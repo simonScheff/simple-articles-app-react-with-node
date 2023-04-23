@@ -6,6 +6,7 @@ mongo-db-data/
 build/
 credentials.json
 credentials.js
+.env
 /.pnp
 .pnp.js
 
